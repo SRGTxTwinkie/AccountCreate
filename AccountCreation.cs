@@ -10,15 +10,8 @@ namespace AccountCreation
     {
         static string getItem(string prompt)
         {
-            ConsoleKey conf;
-
-            Console.Write("What is your {0}: ", prompt);
-            string user_name = Console.ReadLine();
-            Console.WriteLine("Does this look right?: \"{0}\"", user_name);
-            Console.Write("[Y/N]: ");
-            conf = Console.ReadKey().Key;
-            Console.WriteLine();
-
+            ConsoleKey conf = ConsoleKey.N;
+            string user_name = "temp";
 
             while (conf != ConsoleKey.Y || conf != ConsoleKey.N)
             {
@@ -49,18 +42,108 @@ namespace AccountCreation
             return user_name;
         }
 
+        static void login(List<User> user_list)
+        {
+            Console.Clear();
+
+            string current_prompt;
+            int list_index = 0;
+            StringBuilder password = new StringBuilder();
+            ConsoleKey key = ConsoleKey.N;
+
+            Console.Write("Username: ");
+            current_prompt = Console.ReadLine();
+
+            for(int i = 0; i < user_list.Count; i++)
+            {
+                if (user_list[i].getUsername().Equals(current_prompt))
+                {
+                    Console.WriteLine("Username successful");
+                    list_index = i;
+                }
+                else
+                {
+                    Console.WriteLine("No matching Username.");
+                    Console.ReadKey();
+                    return;
+                }
+            }
+
+            Console.Clear();
+
+            while (true)
+            {
+                if(key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+                else
+                {
+                    key = Console.ReadKey().Key;
+                    if(key != ConsoleKey.Backspace)
+                    {
+                        password.Append(key.ToString());
+                    }
+                    else
+                    {
+
+                    }
+
+                }
+            }
+
+            Console.WriteLine(password.ToString());
+            Console.ReadKey();
+        }
+
         static void Main(string[] args)
         {
-            User new_user = new User();
-
-            new_user.changeUsername(getItem("Username"));
-            Console.Clear();
-            new_user.changePassword(getItem("Password"));
-
             Console.Clear();
 
-            Console.WriteLine("Password {0}:", new_user.getPassword());
-            Console.WriteLine("Username {0}", new_user.getUsername());
+            User base_user = new User();
+            List<User> user_list = new List<User>();
+            string[] choices = { "Create new Account", "Login to Account" };
+            
+            base_user.changePassword("Slicer4101");
+            base_user.changeUsername("SRGTxTwinkie");
+            user_list.Add(base_user);
+
+            int choice;
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("What do you want to do?");
+                
+                for(int i = 0; i < choices.Length; i++)
+                {
+                    Console.WriteLine("{0}: {1} ", i + 1 , choices[i]);
+                }
+
+                Console.Write("Choice: ");
+                choice = Convert.ToInt32(Console.ReadLine());
+
+                switch(choice)
+                {
+                    case 1:
+                        User new_user = new User();
+                        Console.Clear();
+                        new_user.changeUsername(getItem("Username"));
+                        Console.Clear();
+                        new_user.changePassword(getItem("Password"));
+                        user_list.Add(new_user);
+                        Console.Clear();
+                        break;
+                    case 2:
+                        login(user_list);
+                        break;
+                    default:
+                        Console.WriteLine("Case defaulted, shouldn't be able to happen");
+                        break;
+                }
+                GC.Collect();
+            }
+
         }
     }
 }
